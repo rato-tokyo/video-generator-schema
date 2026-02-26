@@ -1,8 +1,12 @@
-# data-to-prompt 向け: 出力仕様ガイド
+# data-to-prompt 向け: 出力フォーマット仕様
 
-## あなたの役割
+## 概要
 
-スクレイピング済みの口コミデータを、video-generator が受け付ける `meta.json` と `reviews.json` に変換する。
+このドキュメントは、video-generator に渡す `meta.json` と `reviews.json` の**フォーマット仕様**を定義する。
+
+data-to-prompt プロジェクトでは、スクレイピング済み口コミから Claude が動画向けの口コミ選定・リライトを行う。その最終出力を以下の形式に整形して保存すること。
+
+**このガイドはデータの作り方（選定・リライトの方針）には関与しない。あくまで出力形式の仕様書である。**
 
 ## インストール
 
@@ -13,6 +17,8 @@ pip install git+https://github.com/rato-tokyo/video-generator-schema.git
 ## 出力ファイル
 
 ### 1. meta.json
+
+動画1本分のメタ情報。
 
 ```python
 from video_generator_schema import Meta
@@ -47,6 +53,8 @@ meta.model_dump_json(indent=2, by_alias=True)
 
 ### 2. reviews.json
 
+口コミの配列。Claude が選定・リライトした結果をこの形式で格納する。
+
 ```python
 import json
 from video_generator_schema import Review, Paragraph, Expression, Gender
@@ -76,53 +84,47 @@ json.dumps(
 )
 ```
 
-## データ変換ルール
+## フォーマットルール
 
-### sentences の分割
+### sentences
 
-口コミテキストを **句読点（。）** で区切って sentences に分割する。
-1文が長すぎる場合（目安40文字以上）は読点（、）で分割してもよい。
+音声合成（VOICEVOX）に渡す単位。1 sentence = 1つの音声ファイルになる。
 
-- sentences を結合すると text（改行 `\n` を除去したもの）と完全一致すること
+- sentences を結合すると text（改行 `\n` を除去したもの）と**完全一致**すること
 - これはスキーマのバリデーションで自動チェックされる
+- 分割の粒度は、句読点（。）区切りが基本。1文が長すぎる場合は読点（、）で分割してもよい
 
-### expression の選択
+### expression
 
-各段落の内容に応じて表情を指定する:
+各段落のずんだもんの表情:
 
-| expression | 使い分け |
-|-----------|---------|
-| `"normal"` | 一般的な説明、中立的な内容 |
-| `"surprised"` | 驚き、感心、意外な情報、ポジティブな驚き |
-| `"troubled"` | 困り、心配、ネガティブな内容、不満 |
-
-### topBarText の作成
-
-動画のキャッチコピー。口コミ内容から最もインパクトのある要素を抜き出して作成する。
-`{accent}...{/accent}` で最も目を引く部分を囲む。
-
-例:
-- `"部署によっては{accent}半分が性格悪い!?{/accent}"`
-- `"{accent}残業100時間{/accent}は当たり前の会社"`
-
-### 段落の構成
-
-1つの口コミに含まれる段落数は **1〜5段落** 程度が適切。
-長い口コミは意味のまとまりで段落に分割する。
+| expression | 見た目 | 使い分け |
+|-----------|--------|---------|
+| `"normal"` | 通常の目・眉 | 一般的な説明、中立的な内容 |
+| `"surprised"` | 見開いた目・上がった眉・軽い赤面 | 驚き、感心、意外な情報 |
+| `"troubled"` | ジト目・困り眉 | 困り、心配、ネガティブな内容 |
 
 ### text 内の改行
 
 画面表示上で改行したい位置に `\n` を入れる。
 1行が長くなりすぎないよう、30〜40文字程度で改行を入れることを推奨。
 
+### topBarText
+
+`{accent}...{/accent}` で最も目を引く部分を囲む。
+
+例:
+- `"部署によっては{accent}半分が性格悪い!?{/accent}"`
+- `"{accent}残業100時間{/accent}は当たり前の会社"`
+
 ## バリデーション
 
 出力後、スキーマでバリデーション可能:
 
 ```python
+import json
 from video_generator_schema import Meta, Review
 
-# ファイルから読み込んでバリデーション
 meta = Meta.model_validate_json(open("meta.json").read())
 reviews = [Review.model_validate(r) for r in json.load(open("reviews.json"))]
 ```
