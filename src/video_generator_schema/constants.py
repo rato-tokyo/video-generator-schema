@@ -1,0 +1,6 @@
+VIDEO_FPS: int = 30
+WAV_SAMPLE_RATE: int = 24000
+WAV_CHANNELS: int = 1  # mono
+MAX_REVIEWS: int = 20
+MIN_REVIEWS: int = 1
+SHAPE_TIME_TOLERANCE: float = 1e-4
