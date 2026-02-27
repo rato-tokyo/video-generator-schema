@@ -31,6 +31,7 @@ class TestInputBundle:
             json.dumps(
                 {
                     "companyName": "X",
+                    "thumbnailCompanyName": "X",
                     "topBarText": "Y",
                     "companyIntro": "Z",
                 }

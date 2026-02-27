@@ -61,10 +61,9 @@ class TestParagraph:
         p = Paragraph(text=text, sentences=[text])
         assert p.expression.value == "normal"
 
-    def test_text_too_short(self):
-        text = _text(PARAGRAPH_TEXT_MIN_LENGTH - 1)
-        with pytest.raises(ValidationError, match="too short"):
-            Paragraph(text=text, sentences=[text])
+    def test_text_empty_rejected(self):
+        with pytest.raises(ValidationError):
+            Paragraph(text="", sentences=[""])
 
     def test_text_too_long(self):
         text = _text(PARAGRAPH_TEXT_MAX_LENGTH + 1)

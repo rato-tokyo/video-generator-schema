@@ -23,6 +23,7 @@ def tmp_input_dir(tmp_path: Path) -> Path:
     # meta.json
     meta = {
         "companyName": "テスト株式会社",
+        "thumbnailCompanyName": "テスト\n株式会社",
         "topBarText": "{accent}テスト{/accent}の会社",
         "companyIntro": "テスト株式会社\n・業種：テスト",
     }

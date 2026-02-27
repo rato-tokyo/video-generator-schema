@@ -11,7 +11,13 @@ class Meta(BaseModel):
     company_name: str = Field(
         min_length=1,
         alias="companyName",
-        description="Company name for thumbnail. Use \\n for line breaks",
+        description="Full company name (e.g. '株式会社リクルート')",
+    )
+    thumbnail_company_name: str = Field(
+        min_length=1,
+        alias="thumbnailCompanyName",
+        description="Company name for thumbnail display. Use \\n for line breaks. "
+        "Each line should be <=6 chars for readability (e.g. '株式会社\\nリクルート')",
     )
     top_bar_text: str = Field(
         min_length=1,
