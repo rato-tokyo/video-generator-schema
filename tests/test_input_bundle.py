@@ -16,10 +16,10 @@ class TestInputBundle:
         review = bundle.reviews[0]
         assert review.gender.value == "男性"
         assert review.occupation == "営業"
-        assert len(review.paragraphs) == 1
-        para = review.paragraphs[0]
-        assert para.duration_frames > 0
-        assert len(para.audio_pairs) == 1
+        assert len(review.paragraphs) == 2
+        for para in review.paragraphs:
+            assert para.duration_frames > 0
+            assert len(para.audio_pairs) == 2
 
     def test_missing_meta(self, tmp_path: Path):
         (tmp_path / "reviews.json").write_text("[]")
@@ -40,7 +40,6 @@ class TestInputBundle:
             InputBundle.load(tmp_path)
 
     def test_missing_wav(self, tmp_input_dir: Path):
-        # Remove the wav file
         (tmp_input_dir / "audio" / "r0_p0_s0.wav").unlink()
         with pytest.raises(FileNotFoundError, match="Missing audio file"):
             InputBundle.load(tmp_input_dir)
@@ -51,7 +50,6 @@ class TestInputBundle:
             InputBundle.load(tmp_input_dir)
 
     def test_mouth_text_mismatch(self, tmp_input_dir: Path):
-        # Overwrite mouth json with different text
         mouth = {
             "text": "別のテキスト。",
             "shapes": [
@@ -66,7 +64,6 @@ class TestInputBundle:
             InputBundle.load(tmp_input_dir)
 
     def test_wav_wrong_sample_rate(self, tmp_input_dir: Path):
-        # Overwrite wav with 44100Hz
         wav_path = tmp_input_dir / "audio" / "r0_p0_s0.wav"
         n_frames = 44100  # 1 second at 44100Hz
         with wave.open(str(wav_path), "wb") as wf:
@@ -78,7 +75,6 @@ class TestInputBundle:
             InputBundle.load(tmp_input_dir)
 
     def test_duration_mismatch(self, tmp_input_dir: Path):
-        # Mouth data says 1.0s but wav is 2.0s
         wav_path = tmp_input_dir / "audio" / "r0_p0_s0.wav"
         n_frames = 48000  # 2 seconds at 24000Hz
         with wave.open(str(wav_path), "wb") as wf:

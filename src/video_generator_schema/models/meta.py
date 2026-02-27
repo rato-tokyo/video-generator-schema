@@ -1,4 +1,8 @@
-from pydantic import BaseModel, Field
+import re
+
+from pydantic import BaseModel, Field, model_validator
+
+from ..constants import TOP_BAR_TEXT_MAX_LENGTH
 
 
 class Meta(BaseModel):
@@ -21,3 +25,16 @@ class Meta(BaseModel):
     )
 
     model_config = {"populate_by_name": True}
+
+    @model_validator(mode="after")
+    def top_bar_text_length(self) -> "Meta":
+        """topBarText must be within max length ({accent} tags excluded)."""
+        stripped = re.sub(r"\{/?accent\}", "", self.top_bar_text)
+        length = len(stripped)
+        if length > TOP_BAR_TEXT_MAX_LENGTH:
+            raise ValueError(
+                f"topBarText too long: {length} chars "
+                f"(max {TOP_BAR_TEXT_MAX_LENGTH}, excluding {{accent}} tags). "
+                f"text={stripped!r}"
+            )
+        return self

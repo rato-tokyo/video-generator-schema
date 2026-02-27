@@ -1,4 +1,14 @@
-from .constants import MAX_REVIEWS, VIDEO_FPS, WAV_CHANNELS, WAV_SAMPLE_RATE
+from .constants import (
+    MAX_PARAGRAPHS,
+    MAX_REVIEWS,
+    MIN_PARAGRAPHS,
+    PARAGRAPH_TEXT_MAX_LENGTH,
+    PARAGRAPH_TEXT_MIN_LENGTH,
+    TOP_BAR_TEXT_MAX_LENGTH,
+    VIDEO_FPS,
+    WAV_CHANNELS,
+    WAV_SAMPLE_RATE,
+)
 from .enums import Expression, Gender, MouthShape
 from .input_bundle import AudioPair, InputBundle, ValidatedParagraph, ValidatedReview
 from .models.meta import Meta
@@ -16,6 +26,11 @@ __all__ = [
     "WAV_SAMPLE_RATE",
     "WAV_CHANNELS",
     "MAX_REVIEWS",
+    "MIN_PARAGRAPHS",
+    "MAX_PARAGRAPHS",
+    "PARAGRAPH_TEXT_MIN_LENGTH",
+    "PARAGRAPH_TEXT_MAX_LENGTH",
+    "TOP_BAR_TEXT_MAX_LENGTH",
     # Models
     "Meta",
     "Paragraph",
