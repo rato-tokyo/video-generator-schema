@@ -6,7 +6,7 @@ MIN_REVIEWS: int = 1
 SHAPE_TIME_TOLERANCE: float = 1e-4
 
 # Paragraph text length limits (newlines excluded)
-PARAGRAPH_TEXT_MIN_LENGTH: int = 40
+PARAGRAPH_TEXT_MIN_LENGTH: int = 1
 PARAGRAPH_TEXT_MAX_LENGTH: int = 200
 
 # Paragraphs per review
