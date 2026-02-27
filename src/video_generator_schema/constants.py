@@ -11,7 +11,7 @@ PARAGRAPH_TEXT_MAX_LENGTH: int = 200
 
 # Paragraphs per review
 MIN_PARAGRAPHS: int = 2
-MAX_PARAGRAPHS: int = 3
+MAX_PARAGRAPHS: int = 6
 
 # topBarText length limit ({accent} tags excluded)
 TOP_BAR_TEXT_MAX_LENGTH: int = 20

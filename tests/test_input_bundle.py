@@ -21,6 +21,15 @@ class TestInputBundle:
             assert para.duration_frames > 0
             assert len(para.audio_pairs) == 2
 
+    def test_load_4paragraphs(self, tmp_input_dir_4paragraphs: Path):
+        bundle = InputBundle.load(tmp_input_dir_4paragraphs)
+        assert len(bundle.reviews) == 1
+        review = bundle.reviews[0]
+        assert len(review.paragraphs) == 4
+        for para in review.paragraphs:
+            assert para.duration_frames > 0
+            assert len(para.audio_pairs) == 2
+
     def test_missing_meta(self, tmp_path: Path):
         (tmp_path / "reviews.json").write_text("[]")
         with pytest.raises(FileNotFoundError, match="meta.json"):

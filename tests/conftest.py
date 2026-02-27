@@ -67,6 +67,80 @@ def tmp_input_dir(tmp_path: Path) -> Path:
     return tmp_path
 
 
+_SENTENCE_5 = "三番目の段落です。"
+_SENTENCE_6 = "複数ページ対応のテストのために追加された段落テキストです。"
+_SENTENCE_7 = "四番目の段落です。"
+_SENTENCE_8 = "長い口コミは複数ページに分割されて表示されるようになりました。"
+_PARA_TEXT_3 = _SENTENCE_5 + _SENTENCE_6
+_PARA_TEXT_4 = _SENTENCE_7 + _SENTENCE_8
+
+
+@pytest.fixture
+def tmp_input_dir_4paragraphs(tmp_path: Path) -> Path:
+    """Create a valid input/ directory with 1 review having 4 paragraphs."""
+    audio_dir = tmp_path / "audio"
+    audio_dir.mkdir()
+
+    meta = {
+        "companyName": "テスト株式会社",
+        "thumbnailCompanyName": "テスト\n株式会社",
+        "topBarText": "{accent}テスト{/accent}の会社",
+        "companyIntro": "テスト株式会社\n・業種：テスト",
+    }
+    (tmp_path / "meta.json").write_text(
+        json.dumps(meta, ensure_ascii=False), encoding="utf-8"
+    )
+
+    reviews = [
+        {
+            "gender": "男性",
+            "occupation": "営業",
+            "paragraphs": [
+                {
+                    "text": _PARA_TEXT_1,
+                    "expression": "normal",
+                    "sentences": [_SENTENCE_1, _SENTENCE_2],
+                },
+                {
+                    "text": _PARA_TEXT_2,
+                    "expression": "normal",
+                    "sentences": [_SENTENCE_3, _SENTENCE_4],
+                },
+                {
+                    "text": _PARA_TEXT_3,
+                    "expression": "surprised",
+                    "sentences": [_SENTENCE_5, _SENTENCE_6],
+                },
+                {
+                    "text": _PARA_TEXT_4,
+                    "expression": "troubled",
+                    "sentences": [_SENTENCE_7, _SENTENCE_8],
+                },
+            ],
+        }
+    ]
+    (tmp_path / "reviews.json").write_text(
+        json.dumps(reviews, ensure_ascii=False), encoding="utf-8"
+    )
+
+    for name in [
+        "r0_p0_s0", "r0_p0_s1", "r0_p1_s0", "r0_p1_s1",
+        "r0_p2_s0", "r0_p2_s1", "r0_p3_s0", "r0_p3_s1",
+    ]:
+        _write_silent_wav(audio_dir / f"{name}.wav", duration_sec=1.0)
+
+    _write_mouth_json(audio_dir / "r0_p0_s0.json", _SENTENCE_1)
+    _write_mouth_json(audio_dir / "r0_p0_s1.json", _SENTENCE_2)
+    _write_mouth_json(audio_dir / "r0_p1_s0.json", _SENTENCE_3)
+    _write_mouth_json(audio_dir / "r0_p1_s1.json", _SENTENCE_4)
+    _write_mouth_json(audio_dir / "r0_p2_s0.json", _SENTENCE_5)
+    _write_mouth_json(audio_dir / "r0_p2_s1.json", _SENTENCE_6)
+    _write_mouth_json(audio_dir / "r0_p3_s0.json", _SENTENCE_7)
+    _write_mouth_json(audio_dir / "r0_p3_s1.json", _SENTENCE_8)
+
+    return tmp_path
+
+
 def _write_silent_wav(
     path: Path, duration_sec: float = 1.0, rate: int = 24000
 ) -> None:

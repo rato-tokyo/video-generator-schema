@@ -116,6 +116,22 @@ class TestReview:
         )
         assert len(r.paragraphs) == 3
 
+    def test_four_paragraphs(self):
+        r = Review(
+            gender="男性",
+            occupation="営業",
+            paragraphs=[self._paragraph() for _ in range(4)],
+        )
+        assert len(r.paragraphs) == 4
+
+    def test_six_paragraphs(self):
+        r = Review(
+            gender="女性",
+            occupation="エンジニア",
+            paragraphs=[self._paragraph() for _ in range(6)],
+        )
+        assert len(r.paragraphs) == 6
+
     def test_invalid_gender(self):
         with pytest.raises(ValidationError):
             Review(
